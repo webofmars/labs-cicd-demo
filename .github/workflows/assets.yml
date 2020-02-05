@@ -1,0 +1,22 @@
+name: build assets
+
+on: [push]
+
+jobs:
+  yarn:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Assets
+      run: |
+        yarn encore dev
+        yarn encore production
+      with:
+        name: public
+        path: public
+    needs:
+    - build
+    - yarn

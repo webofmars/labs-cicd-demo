@@ -1,4 +1,4 @@
-name: Yarn
+name: yarn install
 
 on: [push]
 
