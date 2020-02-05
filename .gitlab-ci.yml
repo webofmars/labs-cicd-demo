@@ -3,9 +3,7 @@ default:
   artifacts:
     untracked: true
     paths:
-    - bin
-    - vendor
-    - var
+    - .
 
 variables:
   MYSQL_ROOT_PASSWORD: "root"
@@ -26,12 +24,20 @@ yarn_install:
   image: 20minutes/node-12-yarn-serverless
   script:
   - yarn install --dev
+  artifacts:
+    untracked: true
+    paths:
+    - node_modules
 
 sf_vendors:
   stage: build_sf
   image: composer:1.9
   script:
   - composer install -n
+  artifacts:
+    untracked: true
+    paths:
+    - vendor
 
 sf_assets:
   stage: build_assets
@@ -47,6 +53,7 @@ unit_tests:
   - mysql:5.7
   script:
   - php bin/phpunit ./tests/unit-tests
+  artifacts: {}
 
 functional_tests:
   stage: tests
@@ -55,6 +62,7 @@ functional_tests:
   - mysql:5.7
   script:
   - php bin/phpunit ./tests/functionnal-tests
+  artifacts: {}
 
 deploy_stg:
   stage: deploy
@@ -68,7 +76,6 @@ deploy_stg:
     name: staging
     url: http://apdemo-stg.wmars.space/
   when: on_success
-
 
 deploy_prod:
   stage: deploy
