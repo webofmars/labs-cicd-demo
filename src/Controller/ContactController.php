@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Contact;
-use App\Form\ContactType;
+use App\Form\Contact1Type;
 use App\Repository\ContactRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +31,7 @@ class ContactController extends AbstractController
     public function new(Request $request): Response
     {
         $contact = new Contact();
-        $form = $this->createForm(ContactType::class, $contact);
+        $form = $this->createForm(Contact1Type::class, $contact);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -39,7 +39,7 @@ class ContactController extends AbstractController
             $entityManager->persist($contact);
             $entityManager->flush();
 
-            return $this->redirectToRoute('contact_index');
+            return $this->redirectToRoute('index');
         }
 
         return $this->render('contact/new.html.twig', [
@@ -63,7 +63,7 @@ class ContactController extends AbstractController
      */
     public function edit(Request $request, Contact $contact): Response
     {
-        $form = $this->createForm(ContactType::class, $contact);
+        $form = $this->createForm(Contact1Type::class, $contact);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
