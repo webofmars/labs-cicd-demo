@@ -21,7 +21,7 @@ stages:
 - build_sf
 - build_assets
 - tests
-- run
+- deploy
 
 yarn_install:
   stage: build_yarn
@@ -41,3 +41,37 @@ sf_assets:
   script:
   - yarn encore dev
   - yarn encore production
+
+unit_tests:
+  stage: tests
+  script:
+  - php bin/phpunit ./tests/unit-tests
+
+functional_tests:
+  stage: tests
+  script:
+  - php bin/phpunit ./tests/functionnal-tests
+
+deploy_stg:
+  stage: deploy
+  image: ubuntu:18.04
+  script:
+  - apt update -yqq && apt install -yqq openssh-client rsync
+  - eval $(ssh-agent)
+  - echo $SSH_PRIVATE_KEY | base64 --decode | ssh-add -
+  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $PROJECT_DIR/ root@apdemo-stg.wmars.space:/srv/staging/
+  environment:
+    name: staging
+    url: http://apdemo-stg.wmars.space/
+
+deploy_prod:
+  stage: deploy
+  image: ubuntu:18.04
+  script:
+  - apt update -yqq && apt install -yqq openssh-client rsync
+  - eval $(ssh-agent)
+  - echo $SSH_PRIVATE_KEY | base64 --decode | ssh-add -
+  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $PROJECT_DIR/ root@apdemo.wmars.space:/srv/production/
+  environment:
+    name: production
+    url: http://apdemo.wmars.space/
