@@ -44,11 +44,13 @@ sf_assets:
 
 unit_tests:
   stage: tests
+  image: composer:1.9
   script:
   - php bin/phpunit ./tests/unit-tests
 
 functional_tests:
   stage: tests
+  image: composer:1.9
   script:
   - php bin/phpunit ./tests/functionnal-tests
 
@@ -59,10 +61,12 @@ deploy_stg:
   - apt update -yqq && apt install -yqq openssh-client rsync
   - eval $(ssh-agent)
   - echo $SSH_PRIVATE_KEY | base64 --decode | ssh-add -
-  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $PROJECT_DIR/ root@apdemo-stg.wmars.space:/srv/staging/
+  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $CI_PROJECT_DIR/ root@apdemo-stg.wmars.space:/srv/staging/
   environment:
     name: staging
     url: http://apdemo-stg.wmars.space/
+  when: on_success
+
 
 deploy_prod:
   stage: deploy
@@ -71,7 +75,10 @@ deploy_prod:
   - apt update -yqq && apt install -yqq openssh-client rsync
   - eval $(ssh-agent)
   - echo $SSH_PRIVATE_KEY | base64 --decode | ssh-add -
-  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $PROJECT_DIR/ root@apdemo.wmars.space:/srv/production/
+  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $CI_PROJECT_DIR/ root@apdemo.wmars.space:/srv/production/
   environment:
     name: production
     url: http://apdemo.wmars.space/
+  when: manual
+  only:
+    - tags
