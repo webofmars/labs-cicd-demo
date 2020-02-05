@@ -20,7 +20,7 @@ jobs:
     #   run: composer run-script test
 
     - name: Archive vendors
-        uses: actions/upload-artifact@v1
-        with:
-          name: vendors
-          path: vendor
+      uses: actions/upload-artifact@v1
+      with:
+        name: vendors
+        path: vendor
