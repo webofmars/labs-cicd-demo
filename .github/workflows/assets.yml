@@ -14,9 +14,13 @@ jobs:
       run: |
         yarn encore dev
         yarn encore production
+
+    - name: Archive assets
+      uses: actions/upload-artifact@v1
       with:
         name: public
         path: public
+
     needs:
     - build
     - yarn
