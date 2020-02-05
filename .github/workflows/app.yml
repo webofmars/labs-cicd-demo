@@ -1,0 +1,32 @@
+name: build
+
+on: [push]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: yarn install --dev
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+    - name: Build Assets
+      run: |
+        yarn encore dev
+        yarn encore production
+    - name: Create artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: demo-app
+        path: .
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Unit tests
+      run: php bin/phpunit ./tests/unit-tests
+    - name: Functional tests
+      run: php bin/phpunit ./tests/functionnal-tests
