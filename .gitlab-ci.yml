@@ -1,7 +1,5 @@
 default:
   image: php:7
-  services:
-  - mysql:5.7
   artifacts:
     untracked: true
     paths:
@@ -45,12 +43,16 @@ sf_assets:
 unit_tests:
   stage: tests
   image: composer:1.9
+  services:
+  - mysql:5.7
   script:
   - php bin/phpunit ./tests/unit-tests
 
 functional_tests:
   stage: tests
   image: composer:1.9
+  services:
+  - mysql:5.7
   script:
   - php bin/phpunit ./tests/functionnal-tests
 
