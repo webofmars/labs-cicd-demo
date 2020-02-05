@@ -1,0 +1,20 @@
+name: Yarn
+
+on: [push]
+
+jobs:
+  yarn:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install modules
+      run: yarn install --dev
+
+    - name: Archive modules
+      uses: actions/upload-artifact@v1
+      with:
+        name: node_modules
+        path: node_modules
