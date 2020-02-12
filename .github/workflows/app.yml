@@ -79,7 +79,7 @@ jobs:
         source: ".,!var,!.git*"
         target: "/srv/staging/"
     - name: fix permissions
-      uses: appleboy/ssh-action@v0.0.2
+      uses: appleboy/ssh-action@master
       with:
         host: apdemo-stg.wmars.space
         username: ${{ secrets.SSH_REMOTE_USERNAME }}
@@ -94,3 +94,47 @@ jobs:
         status: ${{ job.status }}
         deployment_id: ${{ steps.deployment.outputs.deployment_id }}
         env_url: http://apdemo-stg.wmars.space/
+
+  deploy_prod:
+    runs-on: ubuntu-latest
+    needs:
+    - build
+    - tests
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v1
+      with:
+        name: artifact
+    - name: restore artifact
+      run: tar -zxvf artifact/artifact.tar.gz && rm artifact/artifact.tar.gz
+    - name: start deployment
+      uses: bobheadxi/deployments@v0.2.0
+      id: deployment
+      with:
+        step: start
+        token: ${{ secrets.GITHUB_TOKEN }}
+        env: production
+    - name: copy file via ssh
+      uses: appleboy/scp-action@v0.0.6
+      with:
+        host: apdemo.wmars.space
+        username: ${{ secrets.SSH_REMOTE_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: ".,!var,!.git*"
+        target: "/srv/production/"
+    - name: fix permissions
+      uses: appleboy/ssh-action@master
+      with:
+        host: apdemo.wmars.space
+        username: ${{ secrets.SSH_REMOTE_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: chown -R www-data:www-data .
+    - name: update deployment status
+      uses: bobheadxi/deployments@v0.2.0
+      if: always()
+      with:
+        step: finish
+        token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+        env_url: http://apdemo.wmars.space/
