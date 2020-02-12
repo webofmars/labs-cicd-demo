@@ -71,7 +71,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         env: staging
     - name: copy file via ssh
-      uses: v0.0.6
+      uses: appleboy/scp-action@v0.0.6
       with:
         host: apdemo-stg.wmars.space
         username: ${{ secrets.SSH_REMOTE_USERNAME }}
