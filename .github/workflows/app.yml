@@ -17,7 +17,7 @@ jobs:
         yarn encore dev
         yarn encore production
     - name: Create artifact
-      run: tar -zcvf artifact.tar.gz vendor bin node_modules assets var
+      run: tar -zcvf artifact.tar.gz assets bin node_modules public var vendor
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
@@ -45,11 +45,27 @@ jobs:
     - uses: actions/download-artifact@v1
       with:
         name: artifact
-    - name: Debug
-      run: ls -lah
     - name: Restore artifact
       run: tar -zxvf artifact/artifact.tar.gz && rm artifact/artifact.tar.gz
     - name: Unit tests
       run: php bin/phpunit ./tests/unit-tests
     - name: Functional tests
       run: php bin/phpunit ./tests/functionnal-tests
+
+  deploy_stg:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v1
+      with:
+        name: artifact
+    - name: Restore artifact
+      run: tar -zxvf artifact/artifact.tar.gz && rm artifact/artifact.tar.gz
+    - name: copy file via ssh
+      uses: appleboy/scp-action@master
+      with:
+        host: apdemo-stg.wmars.space
+        username: ${{ secrets.SSH_REMOTE_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "."
+        target: "/srv/staging/"
