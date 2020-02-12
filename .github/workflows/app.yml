@@ -76,7 +76,7 @@ jobs:
         host: apdemo-stg.wmars.space
         username: ${{ secrets.SSH_REMOTE_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: ".,!var"
+        source: ".,!var,!.git*"
         target: "/srv/staging/"
     - name: update deployment status
       uses: bobheadxi/deployments@v0.2.0
