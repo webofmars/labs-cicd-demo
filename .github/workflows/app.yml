@@ -8,6 +8,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: caching vendors
+      uses: actions/cache@v1
+      env:
+        cache-name: vendors
+      with:
+        path: vendor
+        key: ${{ env.cache-name }}-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+    - name: caching node_modules
+      uses: actions/cache@v1
+      env:
+        cache-name: node_modules
+      with:
+        path: node_modules
+        key: ${{ env.cache-name }}-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
     - name: install modules
       run: yarn install --dev
     - name: install dependencies
