@@ -96,6 +96,7 @@ jobs:
         env_url: http://apdemo-stg.wmars.space/
 
   deploy_prod:
+    if: contains(github.ref, 'tags')
     runs-on: ubuntu-latest
     needs:
     - build
