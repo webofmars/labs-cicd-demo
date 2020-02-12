@@ -17,6 +17,8 @@ jobs:
         yarn encore dev
         yarn encore production
     - name: Create artifact
+      run: tar -zcvf artifact.tar.gz vendor bin node_modules assets var
+    - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
         name: demo-app
@@ -26,6 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v1
+      with:
+        name: demo-app
+    - name: Restore artifact
+      run: tar -zxvf artifact.tar.gz && rm artifact.tar.gz
     - name: Unit tests
       run: php bin/phpunit ./tests/unit-tests
     - name: Functional tests
