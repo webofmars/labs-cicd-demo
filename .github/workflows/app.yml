@@ -75,10 +75,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        args: -r demo-app -c $GITHUB_REF -e staging
+        args: -o $GITHUB_ACTOR -r demo-app -c $GITHUB_REF -e staging
     - name: set deployment status
       uses: niklasmerz/github-deployment-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        args: -r demo-app -s success -u http://apdemo-stg.wmars.space -f
+        args: -o $GITHUB_ACTOR -r demo-app -s success -u http://apdemo-stg.wmars.space -f
