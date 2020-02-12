@@ -78,6 +78,14 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: ".,!var,!.git*"
         target: "/srv/staging/"
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.0.2
+      with:
+        host: apdemo-stg.wmars.space
+        username: ${{ secrets.SSH_REMOTE_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          chown -R www-data:www-data .
     - name: update deployment status
       uses: bobheadxi/deployments@v0.2.0
       if: always()
