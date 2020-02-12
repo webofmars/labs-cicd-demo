@@ -84,7 +84,7 @@ jobs:
         host: apdemo-stg.wmars.space
         username: ${{ secrets.SSH_REMOTE_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: chown -R www-data:www-data .
+        script: chown -R www-data:www-data /srv/staging
     - name: update deployment status
       uses: bobheadxi/deployments@v0.2.0
       if: always()
@@ -129,7 +129,7 @@ jobs:
         host: apdemo.wmars.space
         username: ${{ secrets.SSH_REMOTE_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: chown -R www-data:www-data .
+        script: chown -R www-data:www-data /srv/production
     - name: update deployment status
       uses: bobheadxi/deployments@v0.2.0
       if: always()
