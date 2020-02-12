@@ -1,0 +1,86 @@
+default:
+  image: php:7
+  artifacts:
+    untracked: true
+    paths:
+    - bin
+    - vendor
+    - var
+
+variables:
+  MYSQL_ROOT_PASSWORD: "root"
+  MYSQL_USER: tests
+  MYSQL_PASSWORD: tests
+  MYSQL_DATABASE: app
+  DATABASE_URL: "mysql://$MYSQL_USER:$MYSQL_PASSWORD@mysql:3306/$MYSQL_DATABASE?serverVersion=5.7"
+
+stages:
+- build_yarn
+- build_sf
+- build_assets
+- tests
+- deploy
+
+yarn_install:
+  stage: build_yarn
+  image: 20minutes/node-12-yarn-serverless
+  script:
+  - yarn install --dev
+
+sf_vendors:
+  stage: build_sf
+  image: composer:1.9
+  script:
+  - composer install -n
+
+sf_assets:
+  stage: build_assets
+  image: 20minutes/node-12-yarn-serverless
+  script:
+  - yarn encore dev
+  - yarn encore production
+
+unit_tests:
+  stage: tests
+  image: composer:1.9
+  services:
+  - mysql:5.7
+  script:
+  - php bin/phpunit ./tests/unit-tests
+
+functional_tests:
+  stage: tests
+  image: composer:1.9
+  services:
+  - mysql:5.7
+  script:
+  - php bin/phpunit ./tests/functionnal-tests
+
+deploy_stg:
+  stage: deploy
+  image: ubuntu:18.04
+  script:
+  - apt update -yqq && apt install -yqq openssh-client rsync
+  - eval $(ssh-agent)
+  - echo $SSH_PRIVATE_KEY | base64 --decode | ssh-add -
+  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $CI_PROJECT_DIR/ root@apdemo-stg.wmars.space:/srv/staging/
+  environment:
+    name: staging
+    url: http://apdemo-stg.wmars.space/
+  when: on_success
+
+
+deploy_prod:
+  stage: deploy
+  image: ubuntu:18.04
+  script:
+  - apt update -yqq && apt install -yqq openssh-client rsync
+  - eval $(ssh-agent)
+  - echo $SSH_PRIVATE_KEY | base64 --decode | ssh-add -
+  - rsync -e "ssh -o StrictHostKeyChecking=no" -va $CI_PROJECT_DIR/ root@apdemo.wmars.space:/srv/production/
+  environment:
+    name: production
+    url: http://apdemo.wmars.space/
+  when: manual
+  only:
+    - tags
