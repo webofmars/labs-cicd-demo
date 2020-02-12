@@ -70,3 +70,15 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "."
         target: "/srv/staging/"
+    - name: Create deployment
+      uses: niklasmerz/github-deployment-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: -r demo-app -c $GITHUB_REF -e staging
+    - name: set deployment status
+      uses: niklasmerz/github-deployment-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        args: -r demo-app -s success -u http://apdemo-stg.wmars.space -f
