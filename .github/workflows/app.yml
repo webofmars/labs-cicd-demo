@@ -21,7 +21,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v1
       with:
-        name: artifact.tar.gz
+        name: artifact
         path: artifact.tar.gz
 
   tests:
@@ -44,9 +44,11 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v1
       with:
-        name: artifact.tar.gz
+        name: artifact
+    - name: Debug
+      run: ls -lah
     - name: Restore artifact
-      run: tar -zxvf artifact.tar.gz && rm artifact.tar.gz
+      run: tar -zxvf artifact/artifact.tar.gz && rm artifact/artifact.tar.gz
     - name: Unit tests
       run: php bin/phpunit ./tests/unit-tests
     - name: Functional tests
