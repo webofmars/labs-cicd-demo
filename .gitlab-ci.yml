@@ -28,6 +28,11 @@ yarn_install:
     untracked: true
     paths:
     - node_modules
+  only:
+    # branch
+    - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
 
 sf_vendors:
   stage: build_sf
@@ -38,6 +43,11 @@ sf_vendors:
     untracked: true
     paths:
     - vendor
+  only:
+    # branch
+    - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
 
 sf_assets:
   stage: build_assets
@@ -45,6 +55,11 @@ sf_assets:
   script:
   - yarn encore dev
   - yarn encore production
+  only:
+    # branch
+    - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
 
 unit_tests:
   stage: tests
@@ -54,6 +69,11 @@ unit_tests:
   script:
   - php bin/phpunit ./tests/unit-tests
   artifacts: {}
+  only:
+    # branch
+    - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
 
 functional_tests:
   stage: tests
@@ -63,6 +83,11 @@ functional_tests:
   script:
   - php bin/phpunit ./tests/functionnal-tests
   artifacts: {}
+  only:
+    # branch
+    - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
 
 deploy_stg:
   stage: deploy
@@ -76,6 +101,11 @@ deploy_stg:
     name: staging
     url: http://apdemo-stg.wmars.space/
   when: on_success
+  only:
+    # branch
+    - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
 
 deploy_prod:
   stage: deploy
@@ -90,4 +120,7 @@ deploy_prod:
     url: http://apdemo.wmars.space/
   when: manual
   only:
-    - tags
+    # branch (we want only tags to be deployed in production)
+    # - /^ci/gitlab-saas$/
+    # tag names
+    - /^gitlab-.*$/i
