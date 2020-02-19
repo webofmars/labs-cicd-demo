@@ -1,6 +1,16 @@
 name: build
 
-on: [push]
+on:
+  push:
+    branches:
+      - ci/github-actions
+    tags:
+      - github-*
+  pull_request:
+    branches:
+      - ci/github-actions
+    tags:
+      - github-*
 
 jobs:
 
