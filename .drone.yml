@@ -1,0 +1,42 @@
+kind: pipeline
+name: build
+steps:
+
+- name: yarn install
+  image: 20minutes/node-12-yarn-serverless
+  commands:
+  - yarn install --dev
+
+- name: composer install
+  image: composer:1.9
+  commands:
+  - composer install -n
+
+- name: assets build
+  image: 20minutes/node-12-yarn-serverless
+  commands:
+  - yarn encore dev
+  - yarn encore production
+
+- name: mysql
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: "root"
+    MYSQL_USER: tests
+    MYSQL_PASSWORD: tests
+    MYSQL_DATABASE: app
+  detach: true
+
+- name: unit tests
+  image: composer:1.9
+  environment:
+    DATABASE_URL: "mysql://tests:tests@mysql:3306/app?serverVersion=5.7"
+  commands:
+  - php bin/phpunit ./tests/unit-tests
+
+- name: functionnal tests
+  image: composer:1.9
+  environment:
+    DATABASE_URL: "mysql://tests:tests@mysql:3306/app?serverVersion=5.7"
+  commands:
+  - php bin/phpunit ./tests/functionnal-tests
