@@ -19,7 +19,9 @@ jobs:
         path: node_modules
         key: node_modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
     - name: install modules
-      run: yarn install --dev
+      uses: CultureHQ/actions-yarn@master
+      with:
+        args: install
     - name: install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
     - name: build Assets
