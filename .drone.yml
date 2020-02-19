@@ -40,3 +40,9 @@ steps:
     DATABASE_URL: "mysql://tests:tests@mysql:3306/app?serverVersion=5.7"
   commands:
   - php bin/phpunit ./tests/functionnal-tests
+
+trigger:
+  ref:
+    include:
+    - refs/push/ci/drone
+    - refs/tags/drone-*
