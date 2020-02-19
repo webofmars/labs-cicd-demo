@@ -44,5 +44,5 @@ steps:
 trigger:
   ref:
     include:
-    - refs/push/ci/drone
+    - refs/heads/ci/drone
     - refs/tags/drone-*
