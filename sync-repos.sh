@@ -3,6 +3,9 @@
 set -e -o pipefail
 
 echo "+ synchronizing all branches into master"
+git rebase master ci/github-actions
+git rebase master ci/gitlab-saas
+git rebase master ci/drone
 git merge --no-ff ci/github-actions master
 git merge --no-ff ci/gitlab-saas master
 git merge --no-ff ci/drone master
