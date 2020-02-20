@@ -12,9 +12,9 @@ git fetch . master:ci/gitlab-saas
 git fetch . master:ci/drone
 
 echo "+ pushing refs to github"
-# git push github --all
-# git push github --tags
+git push github --all
+git push github --tags
 
 echo "+ pushing refs to gitlab"
-# git push gitlab --all
-# git push gitlab --tags
+git push gitlab --all
+git push gitlab --tags
